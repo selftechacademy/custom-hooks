@@ -1,31 +1,30 @@
-import React, { useState } from "react";
-import useCount from "./hooks/useCount";
-import useGetUsers from "./hooks/useGetUsers";
+import React, { useState, createContext } from "react";
+import AdminPage from "./components/adminPage/AdminPage";
+import HomePage from "./components/homePage/HomePage";
 import "./App.css";
+import LoginPage from "./components/loginPage/LoginPage";
 
-const playList = ["A", "B"];
+//create context and export it.
+//
+export const UserContext = createContext(null);
 
 function App() {
-  const { count, total, onMinusClick, onPlusClick } = useCount(0);
-  const { isLoading, users, reload, setReload } = useGetUsers();
-  const filteredList = playList.filter((el) => el === "A");
-  function renderUsers(users) {
-    return (
-      <ol>
-        {users.map((el, index) => (
-          <li key={index}>{el.name}</li>
-        ))}
-      </ol>
-    );
-  }
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   return (
-    <div className="App">
-      <button onClick={onMinusClick}>-</button>
-      {count} - {total}
-      <button onClick={onPlusClick}>+</button>
-      <button onClick={() => setReload(!reload)}>Get Users Again</button>
-      {isLoading ? <p>Loading...</p> : renderUsers(users)}
-    </div>
+    <UserContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+      <div className="App">
+        <p>App Js {isAuthenticated}</p>
+
+        {!isAuthenticated ? (
+          <LoginPage />
+        ) : (
+          <>
+            <AdminPage />
+            <HomePage />
+          </>
+        )}
+      </div>
+    </UserContext.Provider>
   );
 }
 
