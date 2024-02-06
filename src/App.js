@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import useCount from "./hooks/useCount";
+import useGetUsers from "./hooks/useGetUsers";
+import "./App.css";
+
+const playList = ["A", "B"];
 
 function App() {
+  const { count, total, onMinusClick, onPlusClick } = useCount(0);
+  const { isLoading, users, reload, setReload } = useGetUsers();
+  const filteredList = playList.filter((el) => el === "A");
+  function renderUsers(users) {
+    return (
+      <ol>
+        {users.map((el, index) => (
+          <li key={index}>{el.name}</li>
+        ))}
+      </ol>
+    );
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <button onClick={onMinusClick}>-</button>
+      {count} - {total}
+      <button onClick={onPlusClick}>+</button>
+      <button onClick={() => setReload(!reload)}>Get Users Again</button>
+      {isLoading ? <p>Loading...</p> : renderUsers(users)}
     </div>
   );
 }
